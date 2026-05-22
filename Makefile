@@ -1,4 +1,4 @@
-TARGET = dice-client
+TARGET = cca_dice_demo
 
 all: $(TARGET)
 
