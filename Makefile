@@ -2,8 +2,8 @@ TARGET = dice-client
 
 all: $(TARGET)
 
-$(TARGET): dice-client.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $(TARGET) dice-client.c
+$(TARGET): cca_dice_demo.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(TARGET) cca_dice_demo.c
 
 clean:
 	rm -f $(TARGET)
