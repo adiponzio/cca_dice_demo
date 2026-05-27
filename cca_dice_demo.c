@@ -76,8 +76,8 @@ int main(int argc, char *argv[])
 	case RSI_DICE_OP_GET_CERT_RAK:
 	case RSI_DICE_OP_GET_CERT_RIK:
 	case RSI_DICE_OP_GET_CERT_CHAIN:
-		args.cert.cert_buffer = (uintptr_t)cert_out;
-		args.cert.cert_len = MAX_CERT_SIZE;
+		args.cert.cert_buf = (uintptr_t)cert_out;
+		args.cert.cert_len = MAX_CERT_LEN;
 		break;
 	default:
 		return EXIT_FAILURE;
