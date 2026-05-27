@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
 	uint8_t hash_to_sign[64];
 	uint8_t signature_out[64];
 	uint8_t cert_out[MAX_CERT_LEN];
+
 	struct realm_dice_req args;
 	uint8_t is_cert_requested = 0;
 
@@ -77,7 +78,7 @@ int main(int argc, char *argv[])
 	case RSI_DICE_OP_GET_CERT_RIK:
 	case RSI_DICE_OP_GET_CERT_CHAIN:
 		args.cert.cert_buf = (uintptr_t)cert_out;
-		args.cert.cert_len = MAX_CERT_LEN;
+		args.cert.cert_buf_size = MAX_CERT_LEN;
 		break;
 	default:
 		return EXIT_FAILURE;
