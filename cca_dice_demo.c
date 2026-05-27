@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 	uint8_t hash_to_sign[64];
 	uint8_t signature_out[64];
 	uint8_t cert_out[MAX_CERT_LEN];
-	struct realm_dice_sign_args args;
+	struct realm_dice_req args;
 	uint8_t is_cert_requested = 0;
 
 	if (argc < 2) {
@@ -51,11 +51,11 @@ int main(int argc, char *argv[])
 	} else if (strcmp(argv[1], "sign-rik") == 0) {
 		op_code = RSI_DICE_OP_SIGN_RIK;
 	} else if (strcmp(argv[1], "cert-rak") == 0) {
-		op_code = RSI_DICE_OP_CERT_RAK;
+		op_code = RSI_DICE_OP_GET_CERT_RAK;
 	} else if (strcmp(argv[1], "cert-rik") == 0) {
-		op_code = RSI_DICE_OP_CERT_RIK;
+		op_code = RSI_DICE_OP_GET_CERT_RIK;
 	} else if (strcmp(argv[1], "cert-chain") == 0) {
-		op_code = RSI_DICE_OP_CERT_CHAIN;
+		op_code = RSI_DICE_OP_GET_CERT_CHAIN;
 	} else {
 		fprintf(stderr, "[Error] Unknown operation: %s\n\n", argv[1]);
 		print_usage(argv[0]);
@@ -73,9 +73,9 @@ int main(int argc, char *argv[])
 		args.sign.signature = (uintptr_t)signature_out;
 		args.sign.sig_len = sizeof(signature_out);
 		break;
-	case RSI_DICE_OP_CERT_RAK:
-	case RSI_DICE_OP_CERT_RIK:
-	case RSI_DICE_OP_CERT_CHAIN:
+	case RSI_DICE_OP_GET_CERT_RAK:
+	case RSI_DICE_OP_GET_CERT_RIK:
+	case RSI_DICE_OP_GET_CERT_CHAIN:
 		args.cert.cert_buffer = (uintptr_t)cert_out;
 		args.cert.cert_len = MAX_CERT_SIZE;
 		break;
@@ -119,22 +119,22 @@ int main(int argc, char *argv[])
 	if (is_cert_requested) {
 		/* The kernel should have updated cert_len with the exact bytes written */
 		printf("[DICE Client] Success! Certificate received.\n");
-		printf("[DICE Client] Exact size: %llu bytes\n", req.cert.cert_len);
+		printf("[DICE Client] Exact size: %llu bytes\n", args.cert.cert_len);
 		
 		printf("[DICE Client] First 16 bytes: ");
-		for (int i = 0; i < req.cert.cert_len; i++) {
+		for (int i = 0; i < args.cert.cert_len; i++) {
 			printf("%02x ", cert_out[i]);
 			if ((i + 1) % 16 == 0) printf("\n");
 		}
 		printf("\n");
 	} else {
 		printf("[DICE Client] Success! Signature received (Size: %llu bytes):\n",
-		       req.sign.sig_len);
-		for (int i = 0; i < req.sign.sig_len; i++) {
+		       args.sign.sig_len);
+		for (int i = 0; i < args.sign.sig_len; i++) {
 			printf("%02x ", signature_out[i]);
 			if ((i + 1) % 16 == 0) printf("\n");
 		}
-		if (req.sign.sig_len % 16 != 0) printf("\n");
+		if (args.sign.sig_len % 16 != 0) printf("\n");
 	}
 
 	//printf("[DICE Client] Success! Signature received from RMM:\n");
