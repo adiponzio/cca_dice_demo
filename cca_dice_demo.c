@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
 	case RSI_DICE_OP_GET_CERT_CHAIN:
 		args.cert.cert_buf = (uintptr_t)cert_out;
 		args.cert.cert_buf_size = MAX_CERT_LEN;
+		is_cert_requested = 1;
 		break;
 	default:
 		return EXIT_FAILURE;
@@ -125,7 +126,7 @@ int main(int argc, char *argv[])
 		printf("[DICE Client] Success! Certificate received.\n");
 		printf("[DICE Client] Exact size: %llu bytes\n", args.cert.cert_len);
 		
-		printf("[DICE Client] First 16 bytes: ");
+		printf("[DICE Client] Certificate content: ");
 		for (int i = 0; i < args.cert.cert_len; i++) {
 			printf("%02x ", cert_out[i]);
 			if ((i + 1) % 16 == 0) printf("\n");
