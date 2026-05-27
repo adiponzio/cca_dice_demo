@@ -30,6 +30,11 @@ int main(int argc, char *argv[])
 	uint8_t hash_to_sign[64];
 	uint8_t signature_out[64];
 	
+	if (argc < 2) {
+		print_usage(argv[0]);
+		return EXIT_FAILURE;
+	}
+
 	memset(hash_to_sign, 0xAB, sizeof(hash_to_sign));
 	memset(signature_out, 0x00, sizeof(signature_out));
 	
