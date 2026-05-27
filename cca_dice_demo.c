@@ -9,6 +9,7 @@
 #include <linux/realm_dice_abi.h>
 
 #define DEVICE_PATH "/dev/realm_dice"
+#define MAX_CERT_LEN 4 * 1024
 
 void print_usage(const char *prog_name)
 {
@@ -29,15 +30,15 @@ int main(int argc, char *argv[])
 
 	uint8_t hash_to_sign[64];
 	uint8_t signature_out[64];
-	
+	uint8_t cert_out[MAX_CERT_LEN];
+	struct realm_dice_sign_args args;
+	uint8_t is_cert_requested = 0;
+
 	if (argc < 2) {
 		print_usage(argv[0]);
 		return EXIT_FAILURE;
 	}
 
-	memset(hash_to_sign, 0xAB, sizeof(hash_to_sign));
-	memset(signature_out, 0x00, sizeof(signature_out));
-	
 	printf("[DICE Client] Opening %s...\n", DEVICE_PATH);
 	fd = open(DEVICE_PATH, O_RDWR);
 	if (fd < 0) {
@@ -62,24 +63,51 @@ int main(int argc, char *argv[])
 	}
 
 	// Struct defined in linux/realm_dice.h
-	struct realm_dice_sign_args args = {
-		.payload = (uintptr_t)hash_to_sign,
-		.payload_len = sizeof(hash_to_sign),
-		.signature = (uintptr_t)signature_out,
-		.sig_len = sizeof(signature_out),
-	};
-	
-	printf("[DICE Client] Sending signing request ioctl to RMM via kernel...\n");
 	switch (op_code) {
 	case RSI_DICE_OP_SIGN_RAK:
-		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RAK, &args);
-		break;
 	case RSI_DICE_OP_SIGN_RIK:
-		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RIK, &args);
+		memset(hash_to_sign, 0xAB, sizeof(hash_to_sign));
+		memset(signature_out, 0x00, sizeof(signature_out));
+		args.sign.payload = (uintptr_t)hash_to_sign;
+		args.sign.payload_len = sizeof(hash_to_sign);
+		args.sign.signature = (uintptr_t)signature_out;
+		args.sign.sig_len = sizeof(signature_out);
+		break;
+	case RSI_DICE_OP_CERT_RAK:
+	case RSI_DICE_OP_CERT_RIK:
+	case RSI_DICE_OP_CERT_CHAIN:
+		args.cert.cert_buffer = (uintptr_t)cert_out;
+		args.cert.cert_len = MAX_CERT_SIZE;
 		break;
 	default:
-		break;
+		return EXIT_FAILURE;
 	}
+
+	//struct realm_dice_sign_args args = {
+	//	.payload = (uintptr_t)hash_to_sign,
+	//	.payload_len = sizeof(hash_to_sign),
+	//	.signature = (uintptr_t)signature_out,
+	//	.sig_len = sizeof(signature_out),
+	//};
+	
+	printf("[DICE Client] Sending signing request ioctl to RMM via kernel...\n");
+	ret = ioctl(fd, op_code, &args);
+//	switch (op_code) {
+//	case RSI_DICE_OP_SIGN_RAK:
+//		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RAK, &args);
+//		break;
+//	case RSI_DICE_OP_SIGN_RIK:
+//		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RIK, &args);
+//		break;
+//	case RSI_DICE_OP_CERT_RAK:
+//		ret = ioctl(fd, RSI_DICE_OP_CERT_RAK, &args);
+//	case RSI_DICE_OP_CERT_RIK:
+//		ret = ioctl(fd, RSI_DICE_OP_CERT_RAK, &args);
+//	case RSI_DICE_OP_CERT_CHAIN:
+//		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RIK, &args);
+//	default:
+//		break;
+//	}
 
 	close(fd);
 	
@@ -88,11 +116,32 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 	
-	printf("[DICE Client] Success! Signature received from RMM:\n");
-	for (int i = 0; i < 64; i++) {
-		printf("%02x ", signature_out[i]);
-		if ((i + 1) % 16 == 0) printf("\n");
+	if (is_cert_requested) {
+		/* The kernel should have updated cert_len with the exact bytes written */
+		printf("[DICE Client] Success! Certificate received.\n");
+		printf("[DICE Client] Exact size: %llu bytes\n", req.cert.cert_len);
+		
+		printf("[DICE Client] First 16 bytes: ");
+		for (int i = 0; i < req.cert.cert_len; i++) {
+			printf("%02x ", cert_out[i]);
+			if ((i + 1) % 16 == 0) printf("\n");
+		}
+		printf("\n");
+	} else {
+		printf("[DICE Client] Success! Signature received (Size: %llu bytes):\n",
+		       req.sign.sig_len);
+		for (int i = 0; i < req.sign.sig_len; i++) {
+			printf("%02x ", signature_out[i]);
+			if ((i + 1) % 16 == 0) printf("\n");
+		}
+		if (req.sign.sig_len % 16 != 0) printf("\n");
 	}
+
+	//printf("[DICE Client] Success! Signature received from RMM:\n");
+	//for (int i = 0; i < 64; i++) {
+	//	printf("%02x ", signature_out[i]);
+	//	if ((i + 1) % 16 == 0) printf("\n");
+	//}
 	
 	return EXIT_SUCCESS;
 }
