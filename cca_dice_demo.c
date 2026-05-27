@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RAK, &args);
 		break;
 	case RSI_DICE_OP_SIGN_RIK:
-		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RAK, &args);
+		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RIK, &args);
 		break;
 	default:
 		break;
