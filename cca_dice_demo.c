@@ -62,10 +62,20 @@ int main(int argc, char *argv[])
 		.payload_len = sizeof(hash_to_sign),
 		.signature = (uintptr_t)signature_out,
 		.sig_len = sizeof(signature_out),
-		.op = opcode
 	};
 	
 	printf("[DICE Client] Sending signing request ioctl to RMM via kernel...\n");
+	switch (op_code) {
+	case RSI_DICE_OP_SIGN_RAK:
+		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RAK, &args);
+		break;
+	case RSI_DICE_OP_SIGN_RIK:
+		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RAK, &args);
+		break;
+	default:
+		break;
+	}
+
 	ret = ioctl(fd, REALM_DICE_IOC_SIGN, &args);
 	close(fd);
 	
