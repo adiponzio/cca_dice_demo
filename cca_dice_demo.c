@@ -101,10 +101,13 @@ int main(int argc, char *argv[])
 		break;
 	case RSI_DICE_OP_GET_CERT_RAK:
 		ret = ioctl(fd, REALM_DICE_IOC_GET_CERT_RAK, &args);
+		break;
 	case RSI_DICE_OP_GET_CERT_RIK:
 		ret = ioctl(fd, REALM_DICE_IOC_GET_CERT_RIK, &args);
+		break;
 	case RSI_DICE_OP_GET_CERT_CHAIN:
 		ret = ioctl(fd, REALM_DICE_IOC_GET_CERT_CHAIN, &args);
+		break;
 	default:
 		break;
 	}
