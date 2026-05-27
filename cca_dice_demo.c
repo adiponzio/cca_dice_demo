@@ -91,23 +91,23 @@ int main(int argc, char *argv[])
 	//};
 	
 	printf("[DICE Client] Sending signing request ioctl to RMM via kernel...\n");
-	ret = ioctl(fd, op_code, &args);
-//	switch (op_code) {
-//	case RSI_DICE_OP_SIGN_RAK:
-//		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RAK, &args);
-//		break;
-//	case RSI_DICE_OP_SIGN_RIK:
-//		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RIK, &args);
-//		break;
-//	case RSI_DICE_OP_CERT_RAK:
-//		ret = ioctl(fd, RSI_DICE_OP_CERT_RAK, &args);
-//	case RSI_DICE_OP_CERT_RIK:
-//		ret = ioctl(fd, RSI_DICE_OP_CERT_RAK, &args);
-//	case RSI_DICE_OP_CERT_CHAIN:
-//		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RIK, &args);
-//	default:
-//		break;
-//	}
+	//ret = ioctl(fd, op_code, &args);
+	switch (op_code) {
+	case RSI_DICE_OP_SIGN_RAK:
+		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RAK, &args);
+		break;
+	case RSI_DICE_OP_SIGN_RIK:
+		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RIK, &args);
+		break;
+	case RSI_DICE_OP_CERT_RAK:
+		ret = ioctl(fd, RSI_DICE_OP_CERT_RAK, &args);
+	case RSI_DICE_OP_CERT_RIK:
+		ret = ioctl(fd, RSI_DICE_OP_CERT_RAK, &args);
+	case RSI_DICE_OP_CERT_CHAIN:
+		ret = ioctl(fd, REALM_DICE_IOC_SIGN_RIK, &args);
+	default:
+		break;
+	}
 
 	close(fd);
 	
