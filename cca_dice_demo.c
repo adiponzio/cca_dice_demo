@@ -76,7 +76,6 @@ int main(int argc, char *argv[])
 		break;
 	}
 
-	ret = ioctl(fd, REALM_DICE_IOC_SIGN, &args);
 	close(fd);
 	
 	if (ret < 0) {
