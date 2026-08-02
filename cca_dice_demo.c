@@ -27,14 +27,14 @@ void save_cert_chain(uint8_t *data)
 	struct cert_chain *chain = (struct cert_chain*) data;
 	size_t n;
 
-	FILE *f = fopen("rmm_cert.der", "w");
+	FILE *f = fopen("rmm_cert.der", "wb");
 	n = fwrite(chain->cert_rmm, 1, chain->cert_rmm_len, f);
 	fclose(f);
 
 	if (n != chain->cert_rmm_len)
 		printf("Error while saving RMM certificate.");
 
-	f = fopen("tfa_cert.der", "w");
+	f = fopen("tfa_cert.der", "wb");
 	n = fwrite(chain->cert_tfa, 1, chain->cert_tfa_len, f);
 	fclose(f);
 
