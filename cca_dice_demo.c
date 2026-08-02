@@ -22,6 +22,26 @@ void print_usage(const char *prog_name)
 	fprintf(stdout, "  cert-chain  : Get machine certificate chain\n");
 }
 
+void save_cert_chain(uint8_t *data)
+{
+	struct cert_chain *chain = (struct cert_chain*) data;
+	size_t n;
+
+	FILE *f = fopen("rmm_cert.der", "w");
+	n = fwrite(chain->cert_rmm, 1, chain->cert_rmm_len, f);
+	fclose(f);
+
+	if (n != chain->cert_rmm_len)
+		printf("Error while saving RMM certificate.");
+
+	f = fopen("tfa_cert.der", "w");
+	n = fwrite(chain->cert_tfa, 1, chain->cert_tfa_len, f);
+	fclose(f);
+
+	if (n != chain->cert_tfa_len)
+		printf("Error while saving TFA certificate.");
+}
+
 int main(int argc, char *argv[])
 {
 	int fd;
@@ -126,6 +146,10 @@ int main(int argc, char *argv[])
 		printf("[DICE Client] Success! Certificate received.\n");
 		printf("[DICE Client] Exact size: %llu bytes\n", args.cert.cert_len);
 		
+		if (op_code == RSI_DICE_OP_GET_CERT_CHAIN) {
+			save_cert_chain(cert_out);
+		}
+
 		printf("[DICE Client] Certificate content: ");
 		for (int i = 0; i < args.cert.cert_len; i++) {
 			printf("%02x ", cert_out[i]);
