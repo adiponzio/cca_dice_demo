@@ -26,7 +26,7 @@ void print_usage(const char *prog_name)
 void save_cert(uint8_t *data, size_t len, char *filename)
 {
 	FILE *f = fopen(filename, "wb");
-	n = fwrite(data, 1, len, f);
+	size_t n = fwrite(data, 1, len, f);
 	fclose(f);
 
 	if (n != len)
