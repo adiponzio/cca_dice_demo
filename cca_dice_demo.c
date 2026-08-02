@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include <linux/realm_dice_abi.h>
+#include <cca_dice_demo.h>
 
 #define DEVICE_PATH "/dev/realm_dice"
 #define MAX_CERT_LEN 4 * 1024
