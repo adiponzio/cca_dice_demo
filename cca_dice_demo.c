@@ -43,14 +43,16 @@ void save_cert_chain(uint8_t *data)
 	fclose(f);
 
 	if (n != chain->cert_rmm_len)
-		printf("Error while saving RMM certificate.");
+		printf("Error while saving RMM certificate.n=%u,len=%u.\n",
+		       n, chain->cert_rmm_len);
 
 	f = fopen("tfa_cert.der", "wb");
 	n = fwrite(chain->cert_tfa, 1, chain->cert_tfa_len, f);
 	fclose(f);
 
 	if (n != chain->cert_tfa_len)
-		printf("Error while saving TFA certificate.");
+		printf("Error while saving TFA certificate.n=%u,len=%u.\n",
+		       n, chain->cert_tfa_len);
 }
 
 int main(int argc, char *argv[])

@@ -2,10 +2,10 @@
 #define _CCA_DICE_DEMO_H_
 
 struct cert_chain {
-	uint8_t cert_rmm[400];
+	uint8_t cert_rmm[512];
 	size_t cert_rmm_len;
 
-	uint8_t cert_tfa[400];
+	uint8_t cert_tfa[512];
 	size_t cert_tfa_len;
 };
 
