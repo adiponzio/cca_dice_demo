@@ -10,7 +10,7 @@
 #include "cca_dice_demo.h"
 
 #define DEVICE_PATH "/dev/realm_dice"
-#define MAX_CERT_LEN 4 * 1024
+#define MAX_BUF_LEN 4 * 1024
 
 void print_usage(const char *prog_name)
 {
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 
 	uint8_t hash_to_sign[64];
 	uint8_t signature_out[64];
-	uint8_t cert_out[MAX_CERT_LEN];
+	uint8_t cert_out[MAX_BUF_LEN];
 
 	struct realm_dice_req args;
 	uint8_t is_cert_requested = 0;
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 	case RSI_DICE_OP_GET_CERT_RIK:
 	case RSI_DICE_OP_GET_CERT_CHAIN:
 		args.cert.cert_buf = (uintptr_t)cert_out;
-		args.cert.cert_buf_size = MAX_CERT_LEN;
+		args.cert.cert_buf_size = MAX_BUF_LEN;
 		is_cert_requested = 1;
 		break;
 	default:
